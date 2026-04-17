@@ -1,4 +1,4 @@
-/* Puzzle League/Tetris Attack Clone by Jonathan Israel!
+/* Puzzle League/Tetris Attack Clone by Jonathan Bowers!
     For more information on the game, check out https://tetris.fandom.com/wiki/Tetris_Attack.
     The game is most known as Pokemon Puzzle League, which was released 2000 on Nintendo 64),
     but it is actually a clone of Panel De Pon, a Super Nintendo Entertainment system
@@ -9,13 +9,7 @@
 import html from "html-literal";
 import { displayMessage, render } from "./index";
 import * as state from "./store";
-import {
-  sprite,
-  audio,
-  loadedSprites,
-  audioKeys,
-  audioSrcs,
-} from "./scripts/fileImports";
+import { sprite, audio, loadedSprites, audioKeys, audioSrcs } from "./scripts/fileImports";
 import { checkMatch } from "./scripts/functions/matchAndScoreFunctions";
 import {
   generateOpeningBoard,
@@ -23,21 +17,10 @@ import {
   startGame,
   resetGameVariables,
 } from "./scripts/functions/startGame";
-import {
-  checkBlockTargets,
-  checkSwapTargets,
-} from "./scripts/functions/swapBlock";
-import {
-  doGravity,
-  areAllBlocksGrounded,
-  isBlockAirborne,
-} from "./scripts/functions/gravity";
+import { checkBlockTargets, checkSwapTargets } from "./scripts/functions/swapBlock";
+import { doGravity, areAllBlocksGrounded, isBlockAirborne } from "./scripts/functions/gravity";
 import { submitResults } from "./scripts/functions/submitResults";
-import {
-  cpuAction,
-  cpuClick,
-  isAllowedToSwap,
-} from "./scripts/computerPlayer/cpu";
+import { cpuAction, cpuClick, isAllowedToSwap } from "./scripts/computerPlayer/cpu";
 import {
   action,
   actionHeld,
@@ -46,22 +29,14 @@ import {
   playerAction,
   holdTime,
 } from "./scripts/controls";
-import {
-  pause,
-  printDebugInfo,
-  unpause,
-} from "./scripts/functions/pauseFunctions";
+import { pause, printDebugInfo, unpause } from "./scripts/functions/pauseFunctions";
 import {
   playAnnouncer,
   playAudio,
   playChainSFX,
   playMusic,
 } from "./scripts/functions/audioFunctions.js";
-import {
-  closeGame,
-  isGameOver,
-  gameOverBoard,
-} from "./scripts/functions/gameOverFunctions";
+import { closeGame, isGameOver, gameOverBoard } from "./scripts/functions/gameOverFunctions";
 
 import {
   announcer,
@@ -108,18 +83,9 @@ import {
   funcTimestamps,
 } from "./scripts/global.js";
 import { updateMousePosition, touch } from "./scripts/clickControls";
-import {
-  TouchOrder,
-  TouchOrders,
-  match,
-} from "./scripts/functions/stickyFunctions";
+import { TouchOrder, TouchOrders, match } from "./scripts/functions/stickyFunctions";
 import { updateGrid } from "./scripts/functions/updateGrid";
-import {
-  arcadeEventes,
-  arcadeEvents,
-  checkTime,
-  updateFPS,
-} from "./scripts/functions/timeEvents";
+import { arcadeEventes, arcadeEvents, checkTime, updateFPS } from "./scripts/functions/timeEvents";
 import {
   allBlocksAreSelectable,
   createTutorialBoard,
@@ -136,15 +102,8 @@ import {
   drawChainMessage,
   drawScoreEarnedMessage,
 } from "./scripts/functions/drawCanvasShapesAndText";
-import {
-  playbackInputs,
-  previous,
-  saveCurrentBoard,
-} from "./scripts/functions/playbackGame";
-import {
-  checkTutorialEvents,
-  loadTutorialState,
-} from "./scripts/tutorial/tutorialEvents";
+import { playbackInputs, previous, saveCurrentBoard } from "./scripts/functions/playbackGame";
+import { checkTutorialEvents, loadTutorialState } from "./scripts/tutorial/tutorialEvents";
 import { middleMenuSetup } from "./scripts/functions/middleMenu";
 
 if (localStorage.getItem("highScore") === null) {
@@ -175,9 +134,7 @@ export class Cursor {
     let pixelX = this.x * grid.SQ;
     let pixelY = this.y * grid.SQ - game.rise;
 
-    let fileToOpen = `${game.cursor_type}${
-      this.orientation === "D" ? "_V" : ""
-    }`;
+    let fileToOpen = `${game.cursor_type}${this.orientation === "D" ? "_V" : ""}`;
 
     // let fileToOpen = `${game.cursor_type}_${this.orientation}`;
     // if (!game.cursor_type.includes("default")) {
@@ -242,7 +199,7 @@ class Block {
       pair: undefined,
       clearLine: undefined,
       solidGroundArray: undefined,
-    }
+    },
   ) {
     this.x = x;
     this.y = y;
@@ -281,24 +238,14 @@ class Block {
     // if (this.y === 0 && (!game.flashDangerColumns || game.frames % 12 < 6)) {
     //   filename = "grid_line_red";
     // }
-    if (
-      this.y === 0 ||
-      (0 !== 0 && game.highestRow <= 1 && game.highestCols.includes(this.x))
-    ) {
+    if (this.y === 0 || (0 !== 0 && game.highestRow <= 1 && game.highestCols.includes(this.x))) {
       filename = "grid_line_red";
-    } else if (
-      this.lightTimer != 0 &&
-      (!this.lightBlink || game.frameMod[60] < 30)
-    ) {
+    } else if (this.lightTimer != 0 && (!this.lightBlink || game.frameMod[60] < 30)) {
       filename = "light_up";
     }
     9 /
       // if (chainable) win.ctx.globalAlpha = 0.5;
-      win.ctx.drawImage(
-        loadedSprites[filename],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
+      win.ctx.drawImage(loadedSprites[filename], grid.SQ * this.x, grid.SQ * this.y - game.rise);
     // win.ctx.globalAlpha = 1;
   }
 
@@ -308,21 +255,13 @@ class Block {
     win.ctx.drawImage(
       loadedSprites[`${this.color}_normal`],
       grid.SQ * this.x + offset * this.swapDirectionX,
-      grid.SQ * this.y + offset * this.swapDirectionY - game.rise
+      grid.SQ * this.y + offset * this.swapDirectionY - game.rise,
     );
   }
 
   drawHint() {
-    if (
-      !game.disableSwap &&
-      game.frameMod[180] < 120 &&
-      game.mode !== "cpu-play"
-    )
-      win.ctx.drawImage(
-        loadedSprites["light_up"],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
+    if (!game.disableSwap && game.frameMod[180] < 120 && game.mode !== "cpu-play")
+      win.ctx.drawImage(loadedSprites["light_up"], grid.SQ * this.x, grid.SQ * this.y - game.rise);
   }
 
   drawDyingColumn() {
@@ -330,9 +269,7 @@ class Block {
     win.ctx.fillStyle = this.color;
     if (this.color === "green") win.ctx.fillStyle = "rgb(0,255,0)";
     win.ctx.globalAlpha =
-      0.25 +
-      (preset.faceValues[game.level] - game.deathTimer) /
-        preset.faceValues[game.level];
+      0.25 + (preset.faceValues[game.level] - game.deathTimer) / preset.faceValues[game.level];
     win.ctx.fillRect(grid.SQ * this.x, grid.SQ * this.y, grid.SQ, grid.SQ);
     win.ctx.globalAlpha = 1;
   }
@@ -344,8 +281,8 @@ class Block {
       this.targetCoord !== undefined
         ? this.targetCoord
         : this.previewCoord !== undefined
-        ? this.previewCoord
-        : this.helpCoord;
+          ? this.previewCoord
+          : this.helpCoord;
     if (this.swapType === "v") {
       coord = this.y;
       gridSize = grid.ROWS;
@@ -366,8 +303,7 @@ class Block {
 
     for (let i = coord; i >= 0 && i < gridSize; i += incr) {
       win.loopCounter++;
-      let CurrentBlock =
-        this.swapType === "h" ? game.board[i][this.y] : game.board[this.x][i];
+      let CurrentBlock = this.swapType === "h" ? game.board[i][this.y] : game.board[this.x][i];
       // let NextBlock =
       //   this.swapType === "h"
       //     ? game.board[i][this.y + 1]
@@ -381,10 +317,7 @@ class Block {
         previewDetected = true;
         type = "Buffer";
         i = coord;
-      } else if (
-        !bufferDetected &&
-        CLEARING_TYPES.includes(CurrentBlock.type)
-      ) {
+      } else if (!bufferDetected && CLEARING_TYPES.includes(CurrentBlock.type)) {
         bufferDetected = true;
         type = "Buffer"; // change to buffer arrow
         i = coord; // repaint earlier arrows to be pink
@@ -405,14 +338,13 @@ class Block {
           } else {
             filename = `arrow${dir}Mid${color}`;
           }
-          let [xCoord, yCoord] =
-            this.swapType === "v" ? [this.x, i] : [i, this.y];
+          let [xCoord, yCoord] = this.swapType === "v" ? [this.x, i] : [i, this.y];
 
           let lazyOffset = filename.includes("UpMid") ? 1 : 0; // fix image lineup issue
           win.ctx.drawImage(
             loadedSprites[filename],
             grid.SQ * xCoord + lazyOffset,
-            grid.SQ * yCoord - game.rise
+            grid.SQ * yCoord - game.rise,
           );
         }
         // else {
@@ -512,60 +444,46 @@ class Block {
 
   drawDebugDots() {
     //Debug Visuals
-    if (
-      this.timer !== 0 ||
-      (this.x == 0 && this.y == 1 && game.currentChain < 1)
-    ) {
+    if (this.timer !== 0 || (this.x == 0 && this.y == 1 && game.currentChain < 1)) {
       win.ctx.drawImage(
         loadedSprites["debugWhite"],
         grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
+        grid.SQ * this.y - game.rise,
       );
     }
     if (this.x == 0 && this.y == 1 && game.currentChain == 1) {
       win.ctx.drawImage(
         loadedSprites["debugWhite"],
         grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
+        grid.SQ * this.y - game.rise,
       );
     }
     if (this.touched) {
-      win.ctx.drawImage(
-        loadedSprites["debugBlue"],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
+      win.ctx.drawImage(loadedSprites["debugBlue"], grid.SQ * this.x, grid.SQ * this.y - game.rise);
     }
     if (this.availForPrimaryChain) {
       win.ctx.drawImage(
         loadedSprites["debugOrange"],
         grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
+        grid.SQ * this.y - game.rise,
       );
     }
-    if (
-      this.availForSecondaryChain ||
-      (this.x == 0 && this.y == 1 && game.currentChain > 1)
-    ) {
+    if (this.availForSecondaryChain || (this.x == 0 && this.y == 1 && game.currentChain > 1)) {
       win.ctx.drawImage(
         loadedSprites["debugPink"],
         grid.SQ * this.x + 12,
         grid.SQ * this.y - game.rise + 12,
         8,
-        8
+        8,
       );
     }
 
     if (this.targetCoord !== undefined) {
-      win.ctx.drawImage(
-        loadedSprites["debugBlue"],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
+      win.ctx.drawImage(loadedSprites["debugBlue"], grid.SQ * this.x, grid.SQ * this.y - game.rise);
       win.ctx.drawImage(
         loadedSprites["debugRed"],
         grid.SQ * this.targetCoord,
-        grid.SQ * this.y - game.rise
+        grid.SQ * this.y - game.rise,
       );
     }
 
@@ -590,7 +508,7 @@ class Block {
         win.ctx.drawImage(
           loadedSprites["debugGreen"],
           grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
+          grid.SQ * this.y - game.rise,
         );
       }
 
@@ -603,7 +521,7 @@ class Block {
         win.ctx.drawImage(
           loadedSprites["debugGreen"],
           grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
+          grid.SQ * this.y - game.rise,
         );
       }
 
@@ -616,7 +534,7 @@ class Block {
         win.ctx.drawImage(
           loadedSprites["debugMagenta"],
           grid.SQ * this.x,
-          grid.SQ * this.y - game.rise
+          grid.SQ * this.y - game.rise,
         );
       }
 
@@ -665,38 +583,30 @@ class Block {
       (this.x === cpu.targetX && this.y === cpu.targetY) ||
       (this.x === cpu.targetX + 1 && this.y === cpu.targetY)
     ) {
-      win.ctx.drawImage(
-        loadedSprites["debugRed"],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
+      win.ctx.drawImage(loadedSprites["debugRed"], grid.SQ * this.x, grid.SQ * this.y - game.rise);
     }
     if (this.x === cpu.holeDetectedAt[0] && this.y === cpu.holeDetectedAt[1]) {
       win.ctx.drawImage(
         loadedSprites["debugYellow"],
         grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
+        grid.SQ * this.y - game.rise,
       );
     }
     if (cpu.matchStrings.includes([this.x, this.y].join())) {
-      win.ctx.drawImage(
-        loadedSprites["debugBlue"],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
+      win.ctx.drawImage(loadedSprites["debugBlue"], grid.SQ * this.x, grid.SQ * this.y - game.rise);
     }
     if (cpu.destination[0] === this.x && cpu.destination[1] === this.y) {
       win.ctx.drawImage(
         loadedSprites["debugMagenta"],
         grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
+        grid.SQ * this.y - game.rise,
       );
     }
     if (cpu.blockToSelect[0] === this.x && cpu.blockToSelect[1] === this.y) {
       win.ctx.drawImage(
         loadedSprites["debugViolet"],
         grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
+        grid.SQ * this.y - game.rise,
       );
     }
 
@@ -704,7 +614,7 @@ class Block {
       win.ctx.drawImage(
         loadedSprites["debugWhite"],
         grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
+        grid.SQ * this.y - game.rise,
       );
     }
   }
@@ -715,11 +625,7 @@ class Block {
     if (this.y === 1) filename = "gridLineWarnTop";
     if (this.y === grid.ROWS - 1) filename = "gridLineWarnBot";
     if (game.frames % 15 < 8) {
-      win.ctx.drawImage(
-        loadedSprites[filename],
-        grid.SQ * this.x,
-        grid.SQ * this.y - game.rise
-      );
+      win.ctx.drawImage(loadedSprites[filename], grid.SQ * this.x, grid.SQ * this.y - game.rise);
     }
   }
 
@@ -727,10 +633,7 @@ class Block {
     let animationIndex = -1;
     switch (this.type) {
       case blockType.BLINKING:
-        if (
-          (game.frameMod[4] >= 0 && game.frameMod[4] < 2) ||
-          debug.freeze == 1
-        ) {
+        if ((game.frameMod[4] >= 0 && game.frameMod[4] < 2) || debug.freeze == 1) {
           animationIndex = 0;
         } else {
           animationIndex = 1;
@@ -778,11 +681,7 @@ class Block {
     if (this.type === "swapping") return; // make behind swapping blocks look vacant
     // if (this.color[0] === "u") urlKey = "unmatchable";
     // if (game.frames % 60 == 0) console.time(`(${this.x}, ${this.y})`);
-    win.ctx.drawImage(
-      loadedSprites[urlKey],
-      grid.SQ * this.x,
-      grid.SQ * this.y - game.rise
-    );
+    win.ctx.drawImage(loadedSprites[urlKey], grid.SQ * this.x, grid.SQ * this.y - game.rise);
     // if (game.frames % 60 == 0) console.timeEnd(`(${this.x}, ${this.y})`);
 
     // if (this.type === blockType.SWAPPING) {
@@ -819,8 +718,7 @@ export function newBlock(c, r, vacant = false) {
 export function checkIfHelpPlayer() {
   if (helpPlayer.forceHint === true) helpPlayer.timer = 0;
   if (
-    ((game.score < 500 && game.mode !== "tutorial" && !debug.show) ||
-      helpPlayer.forceHint) &&
+    ((game.score < 500 && game.mode !== "tutorial" && !debug.show) || helpPlayer.forceHint) &&
     game.frames > 0 &&
     game.frames < arcadeEvents.overtimeStart &&
     !game.disableSwap &&
@@ -891,11 +789,7 @@ export function drawGrid() {
         Square.drawHint();
       }
 
-      if (
-        game.highestRow <= 1 &&
-        game.highestCols.includes(x) &&
-        game.flashDangerColumns
-      ) {
+      if (game.highestRow <= 1 && game.highestCols.includes(x) && game.flashDangerColumns) {
         Square.drawWarningColumns();
       }
     } // end check y
@@ -946,13 +840,9 @@ export function drawGrid() {
         blockIsSolid(game.board[game.cursor.x][game.cursor.y]) &&
         game.board[game.cursor.x][game.cursor.y].tutorialSelectable
       ) {
-        game.cursor_type = touch.mouse.clicked
-          ? "legalCursorDown"
-          : "legalCursorUp";
+        game.cursor_type = touch.mouse.clicked ? "legalCursorDown" : "legalCursorUp";
       } else {
-        game.cursor_type = touch.mouse.clicked
-          ? "illegalCursorDown"
-          : "illegalCursorUp";
+        game.cursor_type = touch.mouse.clicked ? "illegalCursorDown" : "illegalCursorUp";
       }
     }
     if (!game.humanCanPlay && !cpu.control) return;
@@ -1013,39 +903,23 @@ export function endChain(potentialSecondarySuccessor) {
 
   if (game.currentChain > 8 || awardAllClearBonus) {
     playAudio(audio.fanfare5, 0.25);
-    playAnnouncer(
-      announcer.bestChainDialogue,
-      announcer.bestChainIndexLastPicked,
-      "largeChain"
-    );
+    playAnnouncer(announcer.bestChainDialogue, announcer.bestChainIndexLastPicked, "largeChain");
   } else if (game.currentChain > 6) {
     playAudio(audio.fanfare4);
-    playAnnouncer(
-      announcer.largeChainDialogue,
-      announcer.largeChainIndexLastPicked,
-      "largeChain"
-    );
+    playAnnouncer(announcer.largeChainDialogue, announcer.largeChainIndexLastPicked, "largeChain");
   } else if (game.currentChain > 4) {
     playAudio(audio.fanfare3);
-    playAnnouncer(
-      announcer.largeChainDialogue,
-      announcer.largeChainIndexLastPicked,
-      "largeChain"
-    );
+    playAnnouncer(announcer.largeChainDialogue, announcer.largeChainIndexLastPicked, "largeChain");
   } else if (game.currentChain > 3) {
     playAudio(audio.fanfare2);
     playAnnouncer(
       announcer.mediumChainDialogue,
       announcer.mediumChainIndexLastPicked,
-      "mediumChain"
+      "mediumChain",
     );
   } else if (game.currentChain > 1) {
     playAudio(audio.fanfare1);
-    playAnnouncer(
-      announcer.smallChainDialogue,
-      announcer.smallChainIndexLastPicked,
-      "smallChain"
-    );
+    playAnnouncer(announcer.smallChainDialogue, announcer.smallChainIndexLastPicked, "smallChain");
   }
   if (awardAllClearBonus && !game.tutorialRunning) {
     game.message = "All Clear! 10000 bonus points are added to your score.";
@@ -1080,8 +954,7 @@ export function endChain(potentialSecondarySuccessor) {
     }
   }
 
-  if (game.currentChain === 1 && tutorial.chainChallenge)
-    game.board[0][grid.ROWS].timer = -3;
+  if (game.currentChain === 1 && tutorial.chainChallenge) game.board[0][grid.ROWS].timer = -3;
 }
 
 export function createNewRow() {
@@ -1113,8 +986,7 @@ export function createNewRow() {
     game.board[c][grid.ROWS - 1].color = game.board[c][grid.ROWS].color;
     game.board[c][grid.ROWS].color = game.board[c][grid.ROWS + 1].color;
     if (game.playRecording) {
-      game.board[c][grid.ROWS + 1].color =
-        replay.darkStacks[game.linesRaised + 1][c]; // on first raise, access 3rd dark stack
+      game.board[c][grid.ROWS + 1].color = replay.darkStacks[game.linesRaised + 1][c]; // on first raise, access 3rd dark stack
     } else {
       game.board[c][grid.ROWS + 1].color = randomPiece(game.level);
     }
@@ -1125,25 +997,13 @@ export function createNewRow() {
     replay.darkStacks.push(getRow(grid.ROWS + 1));
   }
 
-  if (
-    !debug.enabled &&
-    game.highestRow === 3 &&
-    game.level > 3 &&
-    game.mode !== "training"
-  ) {
-    playAnnouncer(
-      announcer.panicDialogue,
-      announcer.panicIndexLastPicked,
-      "panic",
-      0.2
-    );
+  if (!debug.enabled && game.highestRow === 3 && game.level > 3 && game.mode !== "training") {
+    playAnnouncer(announcer.panicDialogue, announcer.panicIndexLastPicked, "panic", 0.2);
   }
   // score gained for new row passed
   if (game.mode !== "training") {
     game.score += Math.floor(game.scoreMultiplier * 10);
-    game.log.push(
-      `Time: ${game.timeString}, Line Bonus +${game.seconds}, Total: ${game.score}`
-    );
+    game.log.push(`Time: ${game.timeString}, Line Bonus +${game.seconds}, Total: ${game.score}`);
   }
   if (game.highestRow === 1) game.deathTimer = preset.faceValues[game.level];
 
@@ -1160,8 +1020,7 @@ function canvasBorderColor(level) {
     // game is in close to or at overtime
     let [hueDesired, cnst] = [0, 0];
     if (level < 7) [hueDesired, cnst] = [30, 20];
-    let mult =
-      level === 6 ? 1 : level < 10 ? 2 : level < 12 ? 3 : level === 12 ? 4 : 5;
+    let mult = level === 6 ? 1 : level < 10 ? 2 : level < 12 ? 3 : level === 12 ? 4 : 5;
     let satDesired = cnst + 50 + 40 * Math.cos(mult * game.frames);
     let lightnessDesired = 30 + 20 * Math.cos(mult * game.frames);
     // let mult = game.minutes < 3 ? 1 : 2;
@@ -1171,8 +1030,7 @@ function canvasBorderColor(level) {
   let color, hue1, hue2;
   // starts at beige for level 1. Then, from level 2 to 6 below the hue at 50% lightness is:
   // 2 blue (240), 3 cyan (180), 4 green (120), 5 yellow (60), 6 orange, 7 red
-  if (game.level <= 1 && game.mode !== "training")
-    [color, hue1, hue2] = ["purple", 300, 240];
+  if (game.level <= 1 && game.mode !== "training") [color, hue1, hue2] = ["purple", 300, 240];
   if (game.level === 2) [color, hue1, hue2] = ["blue", 240, 180];
   if (game.level === 3) [color, hue1, hue2] = ["cyan", 180, 120];
   if (game.level === 4) [color, hue1, hue2] = ["#00FF00", 120, 60];
@@ -1181,8 +1039,7 @@ function canvasBorderColor(level) {
   if (game.mode === "training") return color;
 
   let framesUntilLevelUp =
-    arcadeEvents.levelUpIncrement -
-    (game.frames % arcadeEvents.levelUpIncrement);
+    arcadeEvents.levelUpIncrement - (game.frames % arcadeEvents.levelUpIncrement);
   if (framesUntilLevelUp > 200) {
     return color;
   } else {
@@ -1193,8 +1050,7 @@ function canvasBorderColor(level) {
     }
     let hueMedian = (hue1 + hue2) / 2;
 
-    let hueDesired =
-      hueMedian - 10 + hueDifference * Math.cos(mult * game.frames);
+    let hueDesired = hueMedian - 10 + hueDifference * Math.cos(mult * game.frames);
     if (game.level === 1) {
       let lightnessDesired = 50 + 10 * Math.cos(mult * game.frames);
       color = `hsl(${hueDesired}, 100%, ${lightnessDesired}%)`;
@@ -1218,16 +1074,12 @@ function canvasBorderColor(level) {
 // prevent browser scroll from arrow keys
 window.addEventListener(
   "keydown",
-  function(e) {
-    if (
-      ["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(
-        e.code
-      ) > -1
-    ) {
+  function (e) {
+    if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
       e.preventDefault();
     }
   },
-  false
+  false,
 );
 
 // prevent app scroll
@@ -1344,12 +1196,9 @@ function KEYBOARD_CONTROL(event) {
       action.down = savedControls.keyboard.down.includes(event.keyCode);
       action.left = savedControls.keyboard.left.includes(event.keyCode);
       action.right = savedControls.keyboard.right.includes(event.keyCode);
-      action.turn_clockwise = savedControls.keyboard.turn_clockwise.includes(
-        event.keyCode
-      );
+      action.turn_clockwise = savedControls.keyboard.turn_clockwise.includes(event.keyCode);
       action.turn_cc = savedControls.keyboard.turn_cc.includes(event.keyCode);
-      action.swap =
-        !event.repeat && savedControls.keyboard.swap.includes(event.keyCode);
+      action.swap = !event.repeat && savedControls.keyboard.swap.includes(event.keyCode);
       action.raise = savedControls.keyboard.raise.includes(event.keyCode);
     }
 
@@ -1381,9 +1230,7 @@ function KEYBOARD_CONTROL(event) {
       if (debug.enabled == 1) {
         if (game.frames < 0) {
           game.frames = -2;
-          playMusic(
-            music[randInt(music.length, true, lastIndex.music, "music")]
-          );
+          playMusic(music[randInt(music.length, true, lastIndex.music, "music")]);
         }
         allBlocksAreSelectable(true);
         debug.show = 1;
@@ -1454,10 +1301,7 @@ function KEYBOARD_CONTROL(event) {
         if (event.keyCode === 190) {
           // .
           console.log("simple", saveCurrentBoard(game.board, true));
-          console.log(
-            "tutorial converted",
-            saveCurrentBoard(game.board, true, false, true)
-          ); // tutorial
+          console.log("tutorial converted", saveCurrentBoard(game.board, true, false, true)); // tutorial
           console.log("full", saveCurrentBoard(game.board, true, true)); // flipped
           console.log(saveCurrentBoard(game.board, false));
           console.table(touchInputs);
@@ -1549,8 +1393,7 @@ export function updateLevelEvents(level) {
   game.blockInitialFaceTime = preset.faceValues[level];
   game.blockStallTime = preset.stallValues[level];
   game.blockPopMultiplier = preset.popMultiplier[level];
-  game.panicIndex =
-    game.level <= 3 ? 1 : game.level <= 6 ? 2 : game.level <= 12 ? 3 : 5;
+  game.panicIndex = game.level <= 3 ? 1 : game.level <= 6 ? 2 : game.level <= 12 ? 3 : 5;
   if (game.level <= 6 && overtimeMusic.includes(sound.Music[0])) {
     playMusic(music[randInt(music.length, true)]);
   } else if (
@@ -1649,7 +1492,7 @@ export function gameLoop() {
           "Some audio is still loading. Sound may not play accurately.",
           true,
           false,
-          5000
+          5000,
         );
       }
     }
@@ -1729,10 +1572,7 @@ export function gameLoop() {
         game.seconds++;
         game.countdownSeconds = 60 - game.seconds; // will be corrected later if at 60 seconds
         if (game.seconds === 1) game.countdownMinutes--;
-        if (
-          game.frames < arcadeEvents.overtimeStart &&
-          game.seconds % 5 === 0
-        ) {
+        if (game.frames < arcadeEvents.overtimeStart && game.seconds % 5 === 0) {
           if (!debug.enabled) debug.clickCounter = 0;
           // let colorRatio = (120 - 60 * game.minutes - game.seconds) / 1.2;
           // win.cvs.style.borderColor = `hsl(34, ${20 + 0.8 * colorRatio}%, ${20 +
@@ -1754,16 +1594,15 @@ export function gameLoop() {
 
         cnt = 0; // game loop counter
         if (game.mode !== "training") {
-          game.defaultMessage = `Level ${
-            game.level
-          } | ${arcadeEvents.secondsPerLevel -
-            (game.seconds % arcadeEvents.secondsPerLevel)} seconds remaining`;
+          game.defaultMessage = `Level ${game.level} | ${
+            arcadeEvents.secondsPerLevel - (game.seconds % arcadeEvents.secondsPerLevel)
+          } seconds remaining`;
         }
         // overtime bonuses
         if (game.minutes > 2 && game.mode !== "training" && !debug.enabled) {
           game.score += game.minutes < 4 ? 25 : 100;
           game.log.push(
-            `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`
+            `Time: ${game.timeString}, Overtime Bonus +${game.seconds}, Total: ${game.score}`,
           );
           console.log(game.log[game.log.length - 1]);
         }
@@ -1803,7 +1642,7 @@ export function gameLoop() {
               announcer.timeTransitionIndexLastPicked,
               "timeTransition",
               0.2,
-              true
+              true,
             );
 
           console.log(
@@ -1811,7 +1650,7 @@ export function gameLoop() {
               perf.realTime
             }, pauseTime = ${perf.sumOfPauseTimes}, timeDifference = ${
               perf.realTimeDiff
-            }, avg loops per sec: ${cnt}`
+            }, avg loops per sec: ${cnt}`,
           );
         }
 
@@ -1857,23 +1696,19 @@ export function gameLoop() {
       checkIfHelpPlayer();
       // if (game.frames % 60 === 0) console.timeEnd("checkIfHelpPlayer");
 
-      if (!game.boardRiseSpeed)
-        game.boardRiseSpeed = preset.speedValues[game.level];
+      if (!game.boardRiseSpeed) game.boardRiseSpeed = preset.speedValues[game.level];
       if (game.raiseDelay > 0) {
         if (game.currentChain === 0 && !game.boardHasAirborneBlock)
           game.raiseDelay -= perf.gameSpeed;
         if (game.raiseDelay < 0) game.raiseDelay = 0;
-        win.raiseDelayBar.style.width = `${100 *
-          (game.raiseDelay / game.raiseCap)}%`;
+        win.raiseDelayBar.style.width = `${100 * (game.raiseDelay / game.raiseCap)}%`;
       } else win.raiseDelayBar.style.width = "1%";
       if (game.frames % game.boardRiseSpeed == 0 && game.boardRiseSpeed > 0) {
         if (
           game.boardRiseRestarter >= 180 ||
-          (game.boardRiseRestarter >= 60 &&
-            game.frames >= arcadeEvents.overtimeStart)
+          (game.boardRiseRestarter >= 60 && game.frames >= arcadeEvents.overtimeStart)
         ) {
-          if (debug.enabled)
-            console.log("restarting rise, delay remaining:", game.raiseDelay);
+          if (debug.enabled) console.log("restarting rise, delay remaining:", game.raiseDelay);
           game.boardRiseRestarter = 0;
           touch.multiClickCounter = 0;
           touch.multiClickTimer = 0;
@@ -1882,19 +1717,14 @@ export function gameLoop() {
 
         if (
           game.frames > 0 &&
-          ((!game.pauseStack && game.raiseDelay === 0) ||
-            game.currentlyQuickRaising)
+          ((!game.pauseStack && game.raiseDelay === 0) || game.currentlyQuickRaising)
         ) {
           game.rise = (game.rise + 2) % 32;
           game.boardRiseRestarter = 0; // restart failsafe timer
           if (game.rise !== 0) {
             if (game.cursor.y === 0) game.cursor.y += 1;
-            if (game.cursor.orientation === "U" && game.cursor.y < 2)
-              game.cursor.y = 2;
-            if (
-              perf.gameSpeed === 2 &&
-              (game.currentlyQuickRaising || game.boardRiseSpeed === 1)
-            ) {
+            if (game.cursor.orientation === "U" && game.cursor.y < 2) game.cursor.y = 2;
+            if (perf.gameSpeed === 2 && (game.currentlyQuickRaising || game.boardRiseSpeed === 1)) {
               game.rise = (game.rise + 2) % 32; // add an extra for 30fps play
             }
           }
@@ -2017,8 +1847,7 @@ export function gameLoop() {
 
       if (game.frames > 0 && !game.over) {
         if (helpPlayer.hintVisible && cpu.matchList.length) {
-          let colorToMatch =
-            game.board[cpu.matchList[0][0]][cpu.matchList[0][1]].color;
+          let colorToMatch = game.board[cpu.matchList[0][0]][cpu.matchList[0][1]].color;
           if (colorToMatch === "vacant") {
             helpPlayer.hintVisible = false;
             console.log("color detected as vacant, redo cpuMatch");
@@ -2035,9 +1864,7 @@ export function gameLoop() {
             console.log("needed to correct cpuMatch");
           }
         }
-        perf.realTimeDiff = Math.abs(
-          perf.realTime - perf.sumOfPauseTimes - game.frames / 60
-        );
+        perf.realTimeDiff = Math.abs(perf.realTime - perf.sumOfPauseTimes - game.frames / 60);
         if (
           perf.realTimeDiff >= 3 &&
           perf.drawDivisor !== 2 &&
@@ -2052,11 +1879,7 @@ export function gameLoop() {
           // // perf.gameSpeed = 2;
           // // perf.fpsInterval = (1000 * perf.gameSpeed) / 60;
         }
-        if (
-          perf.realTimeDiff >= 15 &&
-          game.mode !== "cpu-play" &&
-          !leaderboard.reason
-        ) {
+        if (perf.realTimeDiff >= 15 && game.mode !== "cpu-play" && !leaderboard.reason) {
           perf.drawDivisor = 2;
           leaderboard.canPost = false;
           leaderboard.reason = "slow";
@@ -2072,11 +1895,8 @@ export function gameLoop() {
       }
       if (game.frameMod[6] == 0) {
         // fps counter updates 10 times per second to save memory
-        perf.secondsPerLoop =
-          Math.round(100 * (runtime / 1000 - perf.prev)) / 100;
-        perf.fps = Math.round(
-          (1 * 6 * (1 / perf.secondsPerLoop)) / perf.gameSpeed
-        );
+        perf.secondsPerLoop = Math.round(100 * (runtime / 1000 - perf.prev)) / 100;
+        perf.fps = Math.round((1 * 6 * (1 / perf.secondsPerLoop)) / perf.gameSpeed);
         perf.prev = runtime / 1000;
       }
       if (perf.fps === 27) perf.fps = 30; // hard-coded correction
@@ -2091,18 +1911,12 @@ export function gameLoop() {
         (game.mode === "arcade" || game.mode === "cpu-play")
       ) {
         minutesString =
-          game.countdownMinutes < 10
-            ? `0${game.countdownMinutes}`
-            : `${game.countdownMinutes}`;
+          game.countdownMinutes < 10 ? `0${game.countdownMinutes}` : `${game.countdownMinutes}`;
         secondsString =
-          game.countdownSeconds < 10
-            ? `0${game.countdownSeconds}`
-            : `${game.countdownSeconds}`;
+          game.countdownSeconds < 10 ? `0${game.countdownSeconds}` : `${game.countdownSeconds}`;
       } else {
-        minutesString =
-          game.minutes < 10 ? `0${game.minutes}` : `${game.minutes}`;
-        secondsString =
-          game.seconds < 10 ? `0${game.seconds}` : `${game.seconds}`;
+        minutesString = game.minutes < 10 ? `0${game.minutes}` : `${game.minutes}`;
+        secondsString = game.seconds < 10 ? `0${game.seconds}` : `${game.seconds}`;
       }
 
       game.timeString = `${minutesString}:${secondsString}`;
@@ -2147,8 +1961,9 @@ export function gameLoop() {
         win.timeDisplay.innerHTML = game.timeString;
       }
       if (debug.show) {
-        win.timeDisplay.innerHTML = `Game Time: ${60 * game.minutes +
-          game.seconds} sec<br />Real Time: ${perf.realTime.toFixed(1)} sec`;
+        win.timeDisplay.innerHTML = `Game Time: ${
+          60 * game.minutes + game.seconds
+        } sec<br />Real Time: ${perf.realTime.toFixed(1)} sec`;
         win.levelDisplay.innerHTML = `[${game.cursor.x}, ${game.cursor.y}, ${
           game.board[game.cursor.x][game.cursor.y].color
         }]<br>
@@ -2164,14 +1979,12 @@ export function gameLoop() {
       win.fpsDisplay.innerHTML = `${
         perf.drawDivisor === 1 ? perf.fps : Math.floor(perf.fps / 2)
       } fps${
-        game.mode !== "arcade" || leaderboard.canPost
-          ? ""
-          : ` unranked -- ${perf.unrankedReason}`
+        game.mode !== "arcade" || leaderboard.canPost ? "" : ` unranked -- ${perf.unrankedReason}`
       }`;
       if (game.over) {
-        win.fpsDisplay.innerHTML = `Real Time: ${perf.realTime -
-          perf.sumOfPauseTimes} sec, Game Time ${60 * game.minutes +
-          game.seconds} sec`;
+        win.fpsDisplay.innerHTML = `Real Time: ${
+          perf.realTime - perf.sumOfPauseTimes
+        } sec, Game Time ${60 * game.minutes + game.seconds} sec`;
       }
       win.mainInfoDisplay.innerHTML = `${game.message}`;
       if (game.tutorialRunning) {
@@ -2205,24 +2018,22 @@ export function gameLoop() {
       if (debug.enabled) {
         win.controlsDisplay.innerHTML = html`
           <label
-            >"Timers" are used for game events such as animations and how long a
-            block stalls before falling.</label
+            >"Timers" are used for game events such as animations and how long a block stalls before
+            falling.</label
           >
           <ul style="font-size: large;">
             <li>Brown: Block has a timer greater than 0</li>
             <li>
-              Orange: Block has the ability to be added to the primary chain if
-              it lands onto a match. Disappears after a block land and fails to
-              chain. The current chain count ends when all orange circles have
-              disappeared.
+              Orange: Block has the ability to be added to the primary chain if it lands onto a
+              match. Disappears after a block land and fails to chain. The current chain count ends
+              when all orange circles have disappeared.
             </li>
             <li>
-              Pink: Secondary Chainable Blocks. They are triggered if orange
-              circles already exist. Similar to orange, as they will increase
-              the current chain count if you match with them, but the chain
-              count does not wait for pink circles to still exist. If all orange
-              circles disappear, the chain count ends and all pink circles will
-              turn orange and act as a new chain.
+              Pink: Secondary Chainable Blocks. They are triggered if orange circles already exist.
+              Similar to orange, as they will increase the current chain count if you match with
+              them, but the chain count does not wait for pink circles to still exist. If all orange
+              circles disappear, the chain count ends and all pink circles will turn orange and act
+              as a new chain.
             </li>
             <li>Top Left Brown: Chain count is 0</li>
             <li>Top Left White: Chain count is 1</li>
@@ -2233,35 +2044,26 @@ export function gameLoop() {
         if (cpu.showInfo) {
           win.controlsDisplay.innerHTML = html`
             <ul>
+              <li><strong>black</strong>: AI Target, function is findVerticalMatches.</li>
+              <li><strong>Green</strong>: AI Target, function is findHorizontalMatches</li>
               <li>
-                <strong>black</strong>: AI Target, function is
-                findVerticalMatches.
+                <strong>Magenta</strong>: During match functions, blocks that the AI wants to match
+                together.
+              </li>
+              <li><strong>Yellow</strong>: AI Target, function is flattenStack</li>
+              <li>
+                <strong>Tan</strong>: While flattening stack, this is the hole the AI is trying to
+                fill.
               </li>
               <li>
-                <strong>Green</strong>: AI Target, function is
-                findHorizontalMatches
-              </li>
-              <li>
-                <strong>Magenta</strong>: During match functions, blocks that
-                the AI wants to match together.
-              </li>
-              <li>
-                <strong>Yellow</strong>: AI Target, function is flattenStack
-              </li>
-              <li>
-                <strong>Tan</strong>: While flattening stack, this is the hole
-                the AI is trying to fill.
-              </li>
-              <li>
-                <strong>Violet</strong>: When showing, the AI is doing random
-                inputs. Triggered when the AI attempts to do the same swap twice
-                at the same coordinates, the AI will do 10 random inputs to try
-                and alter the board to fix itself from getting stuck.
+                <strong>Violet</strong>: When showing, the AI is doing random inputs. Triggered when
+                the AI attempts to do the same swap twice at the same coordinates, the AI will do 10
+                random inputs to try and alter the board to fix itself from getting stuck.
               </li>
 
               <li>
-                <strong>black</strong>: If nothing to do, will return to center
-                of stack and raise stack to a limit defined based on game level.
+                <strong>black</strong>: If nothing to do, will return to center of stack and raise
+                stack to a limit defined based on game level.
               </li>
             </ul>
           `;
