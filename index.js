@@ -59,8 +59,6 @@ export function render(st) {
     // showPatchNotes();
     localStorage.setItem("patchNotesShown", "true");
   }
-  document.getElementById("browser").innerHTML = win.browser;
-  document.getElementById("os").innerHTML = win.os;
   addEventListeners(st);
 }
 
